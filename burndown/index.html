@@ -12,10 +12,27 @@
 
         <!-- C3/D3 -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.14/c3.min.css" integrity="sha256-7hWTz8gV+9UAjyZFjT31rIGu4NPTqN2BdU+SD11UUn8=" crossorigin="anonymous" />
+
+        <!-- Us -->
+        <style>
+            #chart {
+                text-align: center;
+                font-size: 72px;
+                font-weight: bolder;
+                margin: 1em auto;
+                width: 90%
+            }
+            #bugs {
+                margin-bottom: 2em;
+            }
+            .open-bugzilla {
+                line-height: 5em;
+            }
+        </style>
     </head>
     <body>
-        <div id="chart"></div>
-        <div id="bugs"></div>
+        <div id="chart" class="container">Loading…</div>
+        <div id="bugs" class="container"></div>
 
         <!-- Bootstrap -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" defer></script>

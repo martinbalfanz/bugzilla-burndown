@@ -1,4 +1,4 @@
-;(exports => {
+;((exports) => {
     "use strict";
 
     // https://www.mozilla.org/en-US/styleguide/identity/firefox/color/
@@ -170,7 +170,9 @@
             });
 
 
-            bugList.appendChild(createLink("Open bug list in Bugzilla", listURL));
+            const openLink = createLink("Open bug list in Bugzilla", listURL);
+            openLink.classList.add('open-bugzilla');
+            bugList.appendChild(openLink);
 
             const bugDates = [];
             const openBugCounts = [];
