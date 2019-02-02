@@ -18,7 +18,7 @@
         }
 
         function onLoad(event) {
-            debug("onLoad: " + request.responseText);
+            //debug("onLoad: " + request.responseText);
             request.removeEventListener("error", onError);
             request.removeEventListener("load", onLoad);
             const response = JSON.parse(request.responseText);
@@ -121,6 +121,7 @@
             //product: bug.product,
             reportedAt: new Date(bug.creation_time),
             lastModifiedAt: new Date(bug.last_change_time),
+            points: Number.parseInt(bug.cf_fx_points) || null,
             /*
             reporter: materializePerson(bug.creator_detail),
             resolution: bug.resolution,
@@ -145,7 +146,7 @@
 
         // Must use exclude_fields because we can't include_fields all cf_status_* or cf_tracking_* flags by name.
         //url.push("&exclude_fields=alias,cc,cf_crash_signature,cf_qa_whiteboard,cf_user_story,classification,flags,groups,is_cc_accessible,is_confirmed,is_creator_accessible,platform,priority,qa_contact,see_also,severity,target_milestone,url,version");
-        url.push("&include_fields=id,summary,is_open,creation_time,last_change_time");
+        url.push("&include_fields=id,summary,is_open,creation_time,last_change_time,cf_fx_points");
 
         url = url.join("");
         xhr(url, (error, response) => {
@@ -260,6 +261,7 @@
             DEPENDS_ON: "deponds_on",
             ID: "id",
             KEYWORDS: "keywords",
+            POINTS: "points",
             PRODUCT: "product",
             REPORTED: "creation_time",
             REPORTER: "creator",

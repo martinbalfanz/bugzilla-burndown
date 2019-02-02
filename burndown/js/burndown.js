@@ -63,8 +63,10 @@
     function drawOpenClosed(data) {
         const columns = [
             ["x"].concat(data.dates),
-            ["open"].concat(data.open),
-            ["closed"].concat(data.closed),
+            //["openPoints"].concat(data.openPoints),
+            //["closedPoints"].concat(data.closedPoints),
+            ["openBugCounts"].concat(data.openBugCounts),
+            ["closedBugCounts"].concat(data.closedBugCounts),
         ];
         if (data.days) {
             columns.push(["days"].concat(data.days));
@@ -74,20 +76,29 @@
                 x: "x",
                 columns: columns,
                 names: {
-                    open: "Open Bugs",
-                    closed: "Closed Bugs",
+                    openPoints: "Open Points",
+                    closedPoints: "Closed Points",
+                    openBugCounts: "Open Bugs",
+                    closedBugCounts: "Closed Bugs",
                 },
                 types: {
                     days: "line",
-                    open: "area",
-                    closed: "area",
+                    openPoints: "area",
+                    closedPoints: "area",
+                    openBugCounts: "area",
+                    closedBugCounts: "area",
                 },
                 colors: {
                     days: FIREFOX_BLUE,
-                    open: "#00C",
-                    closed: "#090",
+                    openPoints: FIREFOX_LIGHT_ORANGE,
+                    closedPoints: FIREFOX_LIGHT_BLUE,
+                    openBugCounts: FIREFOX_LIGHT_ORANGE,
+                    closedBugCounts: FIREFOX_LIGHT_BLUE,
                 },
-                groups: [["open", "closed"]],
+                groups: [
+                    ["openBugCounts", "closedBugCounts"],
+                    ["openPoints", "closedPoints"],
+                ],
                 order: null,
             },
             axis: {
@@ -156,7 +167,7 @@
                     //debug(`Bug ${bug.id} - ${bug.summary}`, bugURL);
 
                     const bugRow = createElement("div");
-                    bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary}`, bugURL));
+                    bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary} (${bug.points} points)`, bugURL));
                     bugList.appendChild(bugRow);
                     listURL += `${bug.id},`;
                 }
@@ -168,6 +179,7 @@
                     getChange(bug.lastModifiedAt).bugsClosed.push(bug);
                 }
             });
+          debug(changes);
 
 
             const openLink = createLink("Open bug list in Bugzilla", listURL);
@@ -178,25 +190,48 @@
             const openBugCounts = [];
             const closedBugCounts = [];
 
+            const openPoints = [];
+            const closedPoints = [];
+
             let runningOpenBugCount = 0;
             let runningClosedBugCount = 0;
+
+            let runningOpenPoints = 0;
+            let runningClosedPoints = 0;
 
             changes = _.sortBy(changes, "date");
 
             const chartStartDate = queryString.since ||
                                    yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
 
+            function sumPoints(bugs) {
+                // XXX Assume 3 points if none were specified in the bug.
+                return _.sumBy(bugs, bug => {
+                  return bug.points || 1; }
+                );
+            }
+
             _.forEach(changes, change => {
+                // How many bugs were closed or opened today?
                 const closedBugCountDelta = change.bugsClosed.length;
                 const openBugCountDelta = change.bugsOpened.length - closedBugCountDelta;
 
+                // How many points were closed or opened today?
+                const closedPointsDelta = sumPoints(change.bugsClosed);
+                const openPointsDelta = sumPoints(change.bugsOpened) - closedPointsDelta;
+
                 runningOpenBugCount += openBugCountDelta;
                 runningClosedBugCount += closedBugCountDelta;
+
+                runningOpenPoints += openPointsDelta;
+                runningClosedPoints += closedPointsDelta;
 
                 if (change.date >= chartStartDate) {
                     bugDates.push(change.date);
                     openBugCounts.push(runningOpenBugCount);
                     closedBugCounts.push(runningClosedBugCount);
+                    openPoints.push(runningOpenPoints);
+                    closedPoints.push(runningClosedPoints);
                 }
             });
 
@@ -206,6 +241,9 @@
                     bugDates.unshift(chartStartDate);
                     openBugCounts.unshift(_.head(openBugCounts));
                     closedBugCounts.unshift(_.head(closedBugCounts));
+
+                    openPoints.unshift(_.head(openPoints));
+                    closedPoints.unshift(_.head(closedPoints));
                 }
 
                 // Extend last bug count to today, so burndown ends on today.
@@ -214,13 +252,18 @@
                     bugDates.push(today);
                     openBugCounts.push(_.last(openBugCounts));
                     closedBugCounts.push(_.last(closedBugCounts));
+
+                    openPoints.push(_.last(openPoints));
+                    closedPoints.push(_.last(closedPoints));
                 }
             }
 
             drawOpenClosed({
                 dates: bugDates,
-                open: openBugCounts,
-                closed: closedBugCounts,
+                openBugCounts: openBugCounts,
+                closedBugCounts: closedBugCounts,
+                openPoints: openPoints,
+                closedPoints: closedPoints,
             });
         });
     }
