@@ -120,13 +120,13 @@
 
     function searchAndPlotBugs(searchTerms) {
         const t0 = Date.now();
-        debug("searchAndPlotBugs: " + searchTerms);
+        debug(`searchAndPlotBugs: ${searchTerms}`);
 
         $bugzilla.searchBugs(searchTerms, (error, bugs) => {
             const t1 = Date.now();
-            debug("searchAndPlotBugs: " + (t1 - t0) + " ms");
+            debug(`searchAndPlotBugs: ${t1 - t0} ms`);
             if (error) {
-                console.error("searchBugs: " + error);
+                console.error(`searchBugs: ${error}`);
                 return;
             }
 
@@ -153,10 +153,10 @@
             _.forEach(bugs, bug => {
                 if (bug.open) {
                     const bugURL = $bugzilla.makeURL(bug.id);
-                    //debug("Bug " + bug.id + " " + bug.summary, bugURL);
+                    //debug(`Bug ${bug.id} - ${bug.summary}`, bugURL);
 
                     const bugRow = createElement("div");
-                    bugRow.appendChild(createLink("bug " + bug.id + " - " + bug.summary, bugURL));
+                    bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary}`, bugURL));
                     bugList.appendChild(bugRow);
                     listURL += `${bug.id},`;
                 }
@@ -229,7 +229,7 @@
     function login(username, password) {
         $bugzilla.login(username, password, (error, response) => {
             if (error) {
-                console.error("login: " + error);
+                console.error(`login: ${error}`);
                 alert(error);
                 return;
             }
@@ -290,5 +290,5 @@
     for (const [key, value] of searchTerms) {
         searchValues.push(value);
     }
-    document.title = "Burndown: " + searchValues.join(", ");
+    document.title = `Burndown: ${searchValues.join(", ")}`;
 })(this);
