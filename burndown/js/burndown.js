@@ -200,7 +200,7 @@
             function sumPoints(bugs) {
                 // XXX Assume 3 points if none were specified in the bug.
                 return _.sumBy(bugs, bug => {
-                  return bug.points || 1; }
+                  return bug.points || 3; }
                 );
             }
 
