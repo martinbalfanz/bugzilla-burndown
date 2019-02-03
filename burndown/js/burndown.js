@@ -63,10 +63,10 @@
     function drawOpenClosed(data) {
         const columns = [
             ["x"].concat(data.dates),
-            //["openPoints"].concat(data.openPoints),
             //["closedPoints"].concat(data.closedPoints),
-            ["openBugCounts"].concat(data.openBugCounts),
+            //["openPoints"].concat(data.openPoints),
             ["closedBugCounts"].concat(data.closedBugCounts),
+            ["openBugCounts"].concat(data.openBugCounts),
         ];
         c3.generate({
             data: {
@@ -91,8 +91,8 @@
                     closedBugCounts: FIREFOX_LIGHT_BLUE,
                 },
                 groups: [
-                    ["openBugCounts", "closedBugCounts"],
                     ["openPoints", "closedPoints"],
+                    ["openBugCounts", "closedBugCounts"],
                 ],
                 order: null,
             },
