@@ -174,8 +174,6 @@
                     getChange(bug.lastModifiedAt).bugsClosed.push(bug);
                 }
             });
-          debug(changes);
-
 
             const openLink = createLink("Open bug list in Bugzilla", listURL);
             openLink.classList.add('open-bugzilla');
