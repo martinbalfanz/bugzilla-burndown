@@ -68,9 +68,6 @@
             ["openBugCounts"].concat(data.openBugCounts),
             ["closedBugCounts"].concat(data.closedBugCounts),
         ];
-        if (data.days) {
-            columns.push(["days"].concat(data.days));
-        }
         c3.generate({
             data: {
                 x: "x",
@@ -82,14 +79,12 @@
                     closedBugCounts: "Closed Bugs",
                 },
                 types: {
-                    days: "line",
                     openPoints: "area",
                     closedPoints: "area",
                     openBugCounts: "area",
                     closedBugCounts: "area",
                 },
                 colors: {
-                    days: FIREFOX_BLUE,
                     openPoints: FIREFOX_LIGHT_ORANGE,
                     closedPoints: FIREFOX_LIGHT_BLUE,
                     openBugCounts: FIREFOX_LIGHT_ORANGE,
