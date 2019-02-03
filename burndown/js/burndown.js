@@ -162,7 +162,7 @@
                     //debug(`Bug ${bug.id} - ${bug.summary}`, bugURL);
 
                     const bugRow = createElement("div");
-                    bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary} (${bug.points} points)`, bugURL));
+                    bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary}` + (bug.points ? `(${bug.points} points)` : ""), bugURL));
                     bugList.appendChild(bugRow);
                     listURL += `${bug.id},`;
                 }
