@@ -79,7 +79,7 @@
                     closedBugCounts: "Closed Bugs",
                 },
                 types: {
-                    openPoints: "area-step",
+                    openPoints: "area",
                     closedPoints: "area",
                     openBugCounts: "area",
                     closedBugCounts: "area",
@@ -201,9 +201,7 @@
 
             function sumPoints(bugs) {
                 // XXX Assume 3 points if none were specified in the bug.
-                return _.sumBy(bugs, bug => {
-                  return bug.points || 3; }
-                );
+                return _.sumBy(bugs, bug => bug.points || 3);
             }
 
             _.forEach(changes, change => {
