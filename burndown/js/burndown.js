@@ -79,7 +79,7 @@
                     closedBugCounts: "Closed Bugs",
                 },
                 types: {
-                    openPoints: "area",
+                    openPoints: "area-step",
                     closedPoints: "area",
                     openBugCounts: "area",
                     closedBugCounts: "area",

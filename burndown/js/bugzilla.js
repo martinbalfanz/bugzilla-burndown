@@ -1,11 +1,6 @@
 ;(exports => {
     "use strict";
 
-    const bzClient = bz.createClient({
-        username: "",
-        password: "",
-    });
-
     const DEBUG = true;
     function debug(s) { DEBUG && console.debug(s); }
 
