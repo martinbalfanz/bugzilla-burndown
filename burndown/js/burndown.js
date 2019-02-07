@@ -137,7 +137,9 @@
             }
 
             if (bugs.length === 0) {
-                console.info("searchBugs: zarro boogs");
+                console.info("searchBugs: zarro boogs found");
+                let chart = document.getElementById("chart");
+                chart.innerText = "Zarro boogs found";
                 return;
             }
 
