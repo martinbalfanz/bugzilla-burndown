@@ -25,20 +25,24 @@
 
     const CHART_START_PERIOD = months(3);
 
-    const queryString = parseQueryString();
+    const queryString = getQueryString();
+    const searchParams = parseQueryString(queryString);
+    const chartStartDate = searchParams.since ||
+                           yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
 
-    function parseQueryString() {
+    function getQueryString() {
         // e.g. "?foo=bar&baz=qux&/"
         let qs = window.location.search;
         if (qs.length <= 1) {
-            return {};
+            return "";
         }
-
         const slash = (qs[qs.length - 1] === '/') ? -1 : undefined;
-        qs = qs.slice(1, slash);
+        return qs.slice(1, slash);
+    }
 
+    function parseQueryString(qs) {
+        // e.g. "foo=bar&baz=qux&"
         const kvs = {};
-
         const params = qs.split("&");
         _.forEach(params, kv => {
             kv = kv.split("=", 2);
@@ -124,11 +128,11 @@
         return element;
     }
 
-    function searchAndPlotBugs(searchTerms) {
+    function searchAndPlotBugs() {
         const t0 = Date.now();
-        debug(`searchAndPlotBugs: ${searchTerms}`);
+        debug(`searchAndPlotBugs: ${queryString}`);
 
-        $bugzilla.searchBugs(searchTerms, (error, bugs) => {
+        $bugzilla.searchBugs(queryString, (error, bugs) => {
             const t1 = Date.now();
             debug(`searchAndPlotBugs: ${t1 - t0} ms`);
             if (error) {
@@ -196,9 +200,6 @@
 
             changes = _.sortBy(changes, "date");
 
-            const chartStartDate = queryString.since ||
-                                   yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
-
             function sumPoints(bugs) {
                 // XXX Assume 3 points if none were specified in the bug.
                 return _.sumBy(bugs, bug => bug.points || 3);
@@ -261,34 +262,8 @@
         });
     }
 
-    const searchTerms = [];
+    searchAndPlotBugs();
 
-    const component = queryString.component;
-    if (component) {
-        const components = component.split(",");
-        for (const component of components) {
-            searchTerms.push([$bugzilla.field.COMPONENT, component]);
-        }
-    }
-
-    const whiteboard = queryString.whiteboard;
-    if (whiteboard) {
-        searchTerms.push([$bugzilla.field.WHITEBOARD, whiteboard]);
-    }
-
-    const blocks = queryString.bug || queryString.blocks;
-    if (blocks) {
-        const blockedBugs = blocks.split(",");
-        for (const blockingBug of blockedBugs) {
-            searchTerms.push([$bugzilla.field.BLOCKS, blockingBug]);
-        }
-    }
-
-    searchAndPlotBugs(searchTerms);
-
-    const searchValues = [];
-    for (const [key, value] of searchTerms) {
-        searchValues.push(value);
-    }
-    document.title = `Burndown: ${searchValues.join(", ")}`;
+    const title = queryString.split("&").join(", ");
+    document.title = `Burning up: ${title}`;
 })(this);

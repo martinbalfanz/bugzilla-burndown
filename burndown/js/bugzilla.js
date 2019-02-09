@@ -130,14 +130,8 @@
         };
     }
 
-    function searchBugs(searchTerms, callback) {
-        let url = [BUGZILLA_URL, "bug?"];
-        for (const [key, value] of searchTerms) {
-            url.push("&", encodeURIComponent(key), "=", encodeURIComponent(value));
-        }
-        if (loginToken) {
-            url.push("&token=", loginToken);
-        }
+    function searchBugs(queryString, callback) {
+        let url = [BUGZILLA_URL, "bug?", queryString];
 
         // Must use exclude_fields because we can't include_fields all cf_status_* or cf_tracking_* flags by name.
         //url.push("&exclude_fields=alias,cc,cf_crash_signature,cf_qa_whiteboard,cf_user_story,classification,flags,groups,is_cc_accessible,is_confirmed,is_creator_accessible,platform,priority,qa_contact,see_also,severity,target_milestone,url,version");
