@@ -261,42 +261,6 @@
         });
     }
 
-/*
-    function login(username, password) {
-        $bugzilla.login(username, password, (error, response) => {
-            if (error) {
-                console.error(`login: ${error}`);
-                alert(error);
-                return;
-            }
-            searchAndPlotBugs(["cf_tracking_e10s", tracking_e10s]);
-        });
-    }
-
-    const username = document.getElementById("username");
-    if (queryString.username) {
-        username.value = queryString.username;
-    }
-
-    const password = document.getElementById("password");
-    if (queryString.password) {
-        password.value = queryString.password;
-    }
-
-    const button = document.getElementById("button");
-    button.focus();
-    button.addEventListener("click", () => {
-        const username = getElementValue("username");
-        const password = getElementValue("password");
-        tracking_e10s = getElementValue("bug");
-        if (username && password) {
-            login(username, password);
-        } else {
-            searchAndPlotBugs(["cf_tracking_e10s", tracking_e10s]);
-        }
-    });
-// */
-
     const searchTerms = [];
 
     const component = queryString.component;
