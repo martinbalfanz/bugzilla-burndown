@@ -64,7 +64,7 @@
         return date.toISOString().slice(0,10);
     }
 
-    function drawOpenClosed(data) {
+    function drawChart(data) {
         const columns = [
             ["x"].concat(data.dates),
             //["closedPoints"].concat(data.closedPoints),
@@ -252,7 +252,7 @@
                 }
             }
 
-            drawOpenClosed({
+            drawChart({
                 dates: bugDates,
                 openBugCounts: openBugCounts,
                 closedBugCounts: closedBugCounts,
