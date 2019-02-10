@@ -23,12 +23,8 @@
     function weeks(w) { return days(7 * w); }
     function months(m) { return weeks(4 * m); }
 
-    const CHART_START_PERIOD = months(3);
-
     const queryString = getQueryString();
-    const searchParams = parseQueryString(queryString);
-    const chartStartDate = searchParams.since ||
-                           yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
+    const chartStartDate = getChartStartDate();
 
     function getQueryString() {
         // e.g. "?foo=bar&baz=qux&/"
@@ -40,20 +36,27 @@
         return qs.slice(1, slash);
     }
 
-    function parseQueryString(qs) {
-        // e.g. "foo=bar&baz=qux&"
-        const kvs = {};
-        const params = qs.split("&");
-        _.forEach(params, kv => {
-            kv = kv.split("=", 2);
-            const key = kv[0].toLowerCase();
-            if (key.length === 0) {
-                return; // "&&"
-            }
-            const value = (kv.length > 1) ? decodeURIComponent(kv[1]) : null;
-            kvs[key] = value;
-        });
-        return kvs;
+    function getChartStartDate() {
+      const CHART_START_PERIOD = months(3);
+      const searchParams = parseQueryString(queryString);
+      return searchParams.since ||
+             yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
+
+      function parseQueryString(qs) {
+          // e.g. "foo=bar&baz=qux&"
+          const kvs = {};
+          const params = qs.split("&");
+          _.forEach(params, kv => {
+              kv = kv.split("=", 2);
+              const key = kv[0].toLowerCase();
+              if (key.length === 0) {
+                  return; // "&&"
+              }
+              const value = (kv.length > 1) ? decodeURIComponent(kv[1]) : null;
+              kvs[key] = value;
+          });
+          return kvs;
+      }
     }
 
     function getElementValue(id) {
