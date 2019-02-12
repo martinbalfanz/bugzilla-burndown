@@ -122,6 +122,11 @@
         return element;
     }
 
+    function setErrorText(msg) {
+        let chart = document.getElementById("chart");
+        chart.innerText = msg;
+    }
+
     function searchAndPlotBugs() {
         const t0 = Date.now();
         debug(`searchAndPlotBugs: ${queryString}`);
@@ -129,15 +134,14 @@
         $bugzilla.searchBugs(queryString, (error, bugs) => {
             const t1 = Date.now();
             debug(`searchAndPlotBugs: ${t1 - t0} ms`);
+
             if (error) {
-                console.error(`searchBugs: ${error}`);
+                setErrorText(`${error.type}`);
                 return;
             }
 
             if (bugs.length === 0) {
-                console.info("searchBugs: zarro boogs found");
-                let chart = document.getElementById("chart");
-                chart.innerText = "Zarro boogs found";
+                setErrorText("Zarro boogs found");
                 return;
             }
 
