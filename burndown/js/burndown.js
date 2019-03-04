@@ -136,12 +136,12 @@
             debug(`searchAndPlotBugs: ${t1 - t0} ms`);
 
             if (error) {
-                setErrorText(`${error.type}`);
+                setErrorText(`☠️ ${error.type}`);
                 return;
             }
 
             if (bugs.length === 0) {
-                setErrorText("Zarro boogs found");
+                setErrorText("🙈 Zarro boogs found");
                 return;
             }
 
