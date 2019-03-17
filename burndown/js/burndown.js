@@ -135,7 +135,7 @@
             debug(`searchAndPlotBugs: ${t1 - t0} ms`);
 
             if (error) {
-                setErrorText(`☠️ ${error.type}`);
+                setErrorText(`🤮 ${error.type}`);
                 return;
             }
 
