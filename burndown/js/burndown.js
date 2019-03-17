@@ -72,9 +72,9 @@
             data: {
                 x: "x",
                 columns: [
-                    ["x"].concat(data.dates),
-                    ["closedBugCounts"].concat(data.closedBugCounts),
-                    ["openBugCounts"].concat(data.openBugCounts),
+                    ["x", ...data.dates],
+                    ["closedBugCounts", ...data.closedBugCounts],
+                    ["openBugCounts", ...data.openBugCounts],
                 ],
                 names: {
                     openBugCounts: "Open Bugs",
