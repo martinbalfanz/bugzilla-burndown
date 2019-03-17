@@ -68,15 +68,14 @@
     }
 
     function drawChart(data) {
-        const columns = [
-            ["x"].concat(data.dates),
-            ["closedBugCounts"].concat(data.closedBugCounts),
-            ["openBugCounts"].concat(data.openBugCounts),
-        ];
         c3.generate({
             data: {
                 x: "x",
-                columns: columns,
+                columns: [
+                    ["x"].concat(data.dates),
+                    ["closedBugCounts"].concat(data.closedBugCounts),
+                    ["openBugCounts"].concat(data.openBugCounts),
+                ],
                 names: {
                     openBugCounts: "Open Bugs",
                     closedBugCounts: "Closed Bugs",
