@@ -157,17 +157,15 @@
             }
 
             const bugList = document.getElementById("bugs");
-            let listURL = `https://bugzilla.mozilla.org/buglist.cgi?bug_id=`;
+            let bugListURL = `https://bugzilla.mozilla.org/buglist.cgi?bug_id=`;
 
             _.forEach(bugs, bug => {
                 if (bug.open) {
                     const bugURL = $bugzilla.makeURL(bug.id);
-                    //debug(`Bug ${bug.id} - ${bug.summary}`, bugURL);
-
                     const bugRow = createElement("div");
                     bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary}`, bugURL));
                     bugList.appendChild(bugRow);
-                    listURL += `${bug.id},`;
+                    bugListURL += `${bug.id},`;
                 }
 
                 getChange(bug.reportedAt).bugsOpened.push(bug);
