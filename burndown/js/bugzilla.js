@@ -116,8 +116,8 @@
             //product: bug.product,
             reportedAt: new Date(bug.creation_time),
             lastModifiedAt: new Date(bug.last_change_time),
-            points: Number.parseInt(bug.cf_fx_points) || null,
             /*
+            points: Number.parseInt(bug.cf_fx_points) || null,
             reporter: materializePerson(bug.creator_detail),
             resolution: bug.resolution,
             summary: bug.summary,
@@ -125,8 +125,8 @@
             statusFlags: materializeStatusFlags(bug),
             trackingFlags: materializeTrackingFlags(bug),
             whiteboard: bug.whiteboard, // TODO: parse whiteboard tags in keys/values?
-            */
             _XXX: bug, // escape hatch to original bug object
+            */
         };
     }
 
