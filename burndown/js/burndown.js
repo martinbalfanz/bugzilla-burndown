@@ -46,7 +46,7 @@
           // e.g. "foo=bar&baz=qux&"
           const kvs = {};
           const params = qs.split("&");
-          _.forEach(params, kv => {
+          for (let kv of params) {
               kv = kv.split("=", 2);
               const key = kv[0].toLowerCase();
               if (key.length === 0) {
@@ -54,7 +54,7 @@
               }
               const value = (kv.length > 1) ? decodeURIComponent(kv[1]) : null;
               kvs[key] = value;
-          });
+          }
           return kvs;
       }
     }
@@ -67,38 +67,33 @@
         return date.toISOString().slice(0,10);
     }
 
-    function drawChart(data) {
+    function drawChart(bugDates, openBugCounts, closedBugCounts) {
         c3.generate({
             data: {
                 x: "x",
                 columns: [
-                    ["x", ...data.dates],
-                    ["closedBugCounts", ...data.closedBugCounts],
-                    ["openBugCounts", ...data.openBugCounts],
+                    ["x", ...bugDates],
+                    ["openBugCounts", ...openBugCounts],
+                    ["closedBugCounts", ...closedBugCounts],
                 ],
                 names: {
-                    openBugCounts: "Open Bugs",
-                    closedBugCounts: "Closed Bugs",
+                    "openBugCounts": "Open Bugs",
+                    "closedBugCounts": "Closed Bugs",
                 },
                 types: {
-                    openBugCounts: "area",
-                    closedBugCounts: "area",
+                    "openBugCounts": "area",
+                    "closedBugCounts": "area",
                 },
                 colors: {
-                    openBugCounts: FIREFOX_LIGHT_ORANGE,
-                    closedBugCounts: FIREFOX_LIGHT_BLUE,
+                    "openBugCounts": FIREFOX_LIGHT_ORANGE,
+                    "closedBugCounts": FIREFOX_LIGHT_BLUE,
                 },
-                groups: [
-                    ["openBugCounts", "closedBugCounts"],
-                ],
-                order: null,
+                groups: [["openBugCounts", "closedBugCounts"]],
             },
             axis: {
                 x: {
                     type: "timeseries",
-                    tick: {
-                        format: "%Y-%m-%d",
-                    }
+                    tick: {format: "%Y-%m-%d"},
                 }
             },
         });
@@ -144,88 +139,83 @@
                 return;
             }
 
-            let changes = {};
+            let bugActivity = {};
 
-            function getChange(date) {
-                date = yyyy_mm_dd(date);
-                let change = changes[date];
-                if (!change) {
-                    change = {date: date, bugsOpened: [], bugsClosed: []};
-                    changes[date] = change;
+            function openedBugOn(date) {
+                let bugDate = bugActivity[date];
+                if (bugDate) {
+                    bugDate.opened++;
+                } else { // is undefined
+                    bugActivity[date] = {date: date, opened: 1, closed: 0};
                 }
-                return change;
+            }
+
+            function closedBugOn(date) {
+                let bugDate = bugActivity[date];
+                if (bugDate) {
+                    bugDate.closed++;
+                } else { // is undefined
+                    bugActivity[date] = {date: date, opened: 0, closed: 1};
+                }
             }
 
             const bugList = document.getElementById("bugs");
             let bugListURL = `https://bugzilla.mozilla.org/buglist.cgi?bug_id=`;
 
-            _.forEach(bugs, bug => {
+            for (let bug of bugs) {
+                let openDate = yyyy_mm_dd(bug.reportedAt);
+                if (openDate < chartStartDate) {
+                    openDate = chartStartDate;
+                }
+                openedBugOn(openDate);
+
                 if (bug.open) {
                     const bugURL = $bugzilla.makeURL(bug.id);
                     const bugRow = createElement("div");
                     bugRow.appendChild(createLink(`bug ${bug.id} - ${bug.summary}`, bugURL));
                     bugList.appendChild(bugRow);
                     bugListURL += `${bug.id},`;
-                }
-
-                getChange(bug.reportedAt).bugsOpened.push(bug);
-
-                if (!bug.open) {
+                } else {
                     // XXX pretend last change time is time of resolution
-                    getChange(bug.lastModifiedAt).bugsClosed.push(bug);
-                }
-            });
-
-            const openLink = createLink("Open bug list in Bugzilla", listURL);
-            openLink.classList.add('open-bugzilla');
-            bugList.appendChild(openLink);
-
-            const bugDates = [];
-            const openBugCounts = [];
-            const closedBugCounts = [];
-
-            let runningOpenBugCount = 0;
-            let runningClosedBugCount = 0;
-
-            changes = _.sortBy(changes, "date");
-
-            _.forEach(changes, change => {
-                // How many bugs were closed or opened today?
-                const closedBugCountDelta = change.bugsClosed.length;
-                const openBugCountDelta = change.bugsOpened.length - closedBugCountDelta;
-
-                runningOpenBugCount += openBugCountDelta;
-                runningClosedBugCount += closedBugCountDelta;
-
-                if (change.date >= chartStartDate) {
-                    bugDates.push(change.date);
-                    openBugCounts.push(runningOpenBugCount);
-                    closedBugCounts.push(runningClosedBugCount);
-                }
-            });
-
-            if (bugDates.length > 0) {
-                // Extend earliest bug count to beginning of chart start date.
-                if (bugDates[0] > chartStartDate) {
-                    bugDates.unshift(chartStartDate);
-                    openBugCounts.unshift(_.head(openBugCounts));
-                    closedBugCounts.unshift(_.head(closedBugCounts));
-                }
-
-                // Extend last bug count to today, so burndown ends on today.
-                const today = yyyy_mm_dd(new Date());
-                if (_.last(bugDates) < today) {
-                    bugDates.push(today);
-                    openBugCounts.push(_.last(openBugCounts));
-                    closedBugCounts.push(_.last(closedBugCounts));
+                    let closedDate = yyyy_mm_dd(bug.lastModifiedAt);
+                    if (closedDate < chartStartDate) {
+                        closedDate = chartStartDate;
+                    }
+                    closedBugOn(closedDate);
                 }
             }
 
-            drawChart({
-                dates: bugDates,
-                openBugCounts: openBugCounts,
-                closedBugCounts: closedBugCounts,
-            });
+            let bugDates = [];
+            let openBugCounts = [];
+            let closedBugCounts = [];
+
+            let openBugCount = 0;
+            let closedBugCount = 0;
+
+            bugActivity = _.sortBy(bugActivity, "date");
+            for (let {date, opened, closed} of bugActivity) {
+                bugDates.push(date);
+
+                openBugCount += opened;
+                openBugCounts.push(openBugCount);
+
+                closedBugCount += closed;
+                closedBugCounts.push(closedBugCount);
+            }
+
+            // Extend last bug count to today, so burndown ends on today.
+            const today = yyyy_mm_dd(new Date());
+            if (bugDates.length > 0 && _.last(bugDates) < today) {
+                bugDates.push(today);
+                openBugCounts.push(openBugCount);
+                closedBugCounts.push(closedBugCount);
+            }
+
+            const openLink = createLink("Open bug list in Bugzilla", bugListURL);
+            openLink.classList.add('open-bugzilla');
+            bugList.appendChild(openLink);
+
+            drawChart(bugDates, openBugCounts, closedBugCounts);
         });
     }
 
