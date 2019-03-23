@@ -39,7 +39,7 @@
     function getChartStartDate() {
       const CHART_START_PERIOD = months(3);
       const searchParams = parseQueryString(queryString);
-      return searchParams.since ||
+      return (searchPararms && searchParams.since) ||
              yyyy_mm_dd(new Date(Date.now() - CHART_START_PERIOD));
 
       function parseQueryString(qs) {
