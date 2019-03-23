@@ -67,18 +67,28 @@
         return date.toISOString().slice(0,10);
     }
 
-    function drawChart(bugDates, openBugCounts, closedBugCounts) {
+    function drawChart(openBugDates, openBugCounts,
+                       closedBugDates, closedBugCounts,
+                       forecastBugDates, forecastBugCounts) {
         c3.generate({
             data: {
-                x: "x",
+                xs: {
+                    "openBugCounts": "openBugDates",
+                    "closedBugCounts": "closedBugDates",
+                    "forecastBugCounts": "forecastBugDates",
+                },
                 columns: [
-                    ["x", ...bugDates],
+                    ["openBugDates", ...openBugDates],
                     ["openBugCounts", ...openBugCounts],
+                    ["closedBugDates", ...closedBugDates],
                     ["closedBugCounts", ...closedBugCounts],
+                    ["forecastBugDates", ...forecastBugDates],
+                    ["forecastBugCounts", ...forecastBugCounts],
                 ],
                 names: {
                     "openBugCounts": "Open Bugs",
                     "closedBugCounts": "Closed Bugs",
+                    "forecastBugCounts": "Forecast",
                 },
                 types: {
                     "openBugCounts": "area",
@@ -87,13 +97,14 @@
                 colors: {
                     "openBugCounts": FIREFOX_LIGHT_ORANGE,
                     "closedBugCounts": FIREFOX_LIGHT_BLUE,
+                    "forecastBugCounts": FIREFOX_DARK_BLUE_GREY1,
                 },
                 groups: [["openBugCounts", "closedBugCounts"]],
             },
             axis: {
                 x: {
                     type: "timeseries",
-                    tick: {format: "%Y-%m-%d"},
+                    tick: {format: "%m/%d"},
                 }
             },
         });
@@ -185,6 +196,10 @@
                 }
             }
 
+            const openLink = createLink("Open bug list in Bugzilla", bugListURL);
+            openLink.classList.add('open-bugzilla');
+            bugList.appendChild(openLink);
+
             let bugDates = [];
             let openBugCounts = [];
             let closedBugCounts = [];
@@ -196,7 +211,7 @@
             for (let {date, opened, closed} of bugActivity) {
                 bugDates.push(date);
 
-                openBugCount += opened;
+                openBugCount += opened - closed;
                 openBugCounts.push(openBugCount);
 
                 closedBugCount += closed;
@@ -211,11 +226,25 @@
                 closedBugCounts.push(closedBugCount);
             }
 
-            const openLink = createLink("Open bug list in Bugzilla", bugListURL);
-            openLink.classList.add('open-bugzilla');
-            bugList.appendChild(openLink);
+            let forecastDate = "2019-04-01";
+            let forecastBugDates = [chartStartDate, forecastDate];
+            let forecastBugCounts = [];
+            /*
+            if (bugDates.length > 0) {
+                bugDates.push(forecastDate);
+                //openBugCounts.push(0);
+                //closedBugCounts.push(openBugCount + closedBugCount);
+                forecastBugCounts = [closedBugCounts[0],
+                                     openBugCount + closedBugCount];
+            }
+            */
 
-            drawChart(bugDates, openBugCounts, closedBugCounts);
+            let openBugDates = bugDates;
+            let closedBugDates = bugDates;
+
+            drawChart(openBugDates, openBugCounts,
+                      closedBugDates, closedBugCounts,
+                      forecastBugDates, forecastBugCounts);
         });
     }
 
