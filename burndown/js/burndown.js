@@ -92,6 +92,7 @@
                     "closedBugCounts": FIREFOX_LIGHT_BLUE,
                 },
                 groups: [["openBugCounts", "closedBugCounts"]],
+                order: null,
             },
             axis: {
                 x: {
