@@ -97,7 +97,7 @@
             axis: {
                 x: {
                     type: "timeseries",
-                    tick: {format: "%m/%d"},
+                    tick: {format: "%Y-%m-%d"},
                 }
             },
         });
