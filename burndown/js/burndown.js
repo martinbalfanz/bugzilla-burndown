@@ -67,28 +67,21 @@
         return date.toISOString().slice(0,10);
     }
 
-    function drawChart(openBugDates, openBugCounts,
-                       closedBugDates, closedBugCounts,
-                       forecastBugDates, forecastBugCounts) {
+    function drawChart(bugDates, openBugCounts, closedBugCounts) {
         c3.generate({
             data: {
                 xs: {
-                    "openBugCounts": "openBugDates",
-                    "closedBugCounts": "closedBugDates",
-                    "forecastBugCounts": "forecastBugDates",
+                    "openBugCounts": "bugDates",
+                    "closedBugCounts": "bugDates",
                 },
                 columns: [
-                    ["openBugDates", ...openBugDates],
-                    ["openBugCounts", ...openBugCounts],
-                    ["closedBugDates", ...closedBugDates],
+                    ["bugDates", ...bugDates],
                     ["closedBugCounts", ...closedBugCounts],
-                    ["forecastBugDates", ...forecastBugDates],
-                    ["forecastBugCounts", ...forecastBugCounts],
+                    ["openBugCounts", ...openBugCounts],
                 ],
                 names: {
                     "openBugCounts": "Open Bugs",
                     "closedBugCounts": "Closed Bugs",
-                    "forecastBugCounts": "Forecast",
                 },
                 types: {
                     "openBugCounts": "area",
@@ -97,7 +90,6 @@
                 colors: {
                     "openBugCounts": FIREFOX_LIGHT_ORANGE,
                     "closedBugCounts": FIREFOX_LIGHT_BLUE,
-                    "forecastBugCounts": FIREFOX_DARK_BLUE_GREY1,
                 },
                 groups: [["openBugCounts", "closedBugCounts"]],
             },
@@ -226,25 +218,7 @@
                 closedBugCounts.push(closedBugCount);
             }
 
-            let forecastDate = "2019-04-01";
-            let forecastBugDates = [chartStartDate, forecastDate];
-            let forecastBugCounts = [];
-            /*
-            if (bugDates.length > 0) {
-                bugDates.push(forecastDate);
-                //openBugCounts.push(0);
-                //closedBugCounts.push(openBugCount + closedBugCount);
-                forecastBugCounts = [closedBugCounts[0],
-                                     openBugCount + closedBugCount];
-            }
-            */
-
-            let openBugDates = bugDates;
-            let closedBugDates = bugDates;
-
-            drawChart(openBugDates, openBugCounts,
-                      closedBugDates, closedBugCounts,
-                      forecastBugDates, forecastBugCounts);
+            drawChart(bugDates, openBugCounts, closedBugCounts);
         });
     }
 
