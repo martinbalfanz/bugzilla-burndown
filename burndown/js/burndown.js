@@ -180,8 +180,7 @@
                     bugList.appendChild(bugRow);
                     bugListURL += `${bug.id},`;
                 } else {
-                    // XXX pretend last change time is time of resolution
-                    let closedDate = yyyy_mm_dd(bug.lastModifiedAt);
+                    let closedDate = yyyy_mm_dd(bug.resolutionTime);
                     if (closedDate < chartStartDate) {
                         closedDate = chartStartDate;
                     }

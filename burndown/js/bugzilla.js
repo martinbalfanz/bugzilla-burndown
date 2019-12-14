@@ -115,7 +115,7 @@
             //os: bug.op_sys,
             //product: bug.product,
             creationTime: new Date(bug.creation_time),
-            lastModifiedAt: new Date(bug.last_change_time),
+            resolutionTime: new Date(bug.cf_last_resolved),
             /*
             points: Number.parseInt(bug.cf_fx_points) || null,
             reporter: materializePerson(bug.creator_detail),
@@ -135,7 +135,7 @@
 
         // Must use exclude_fields because we can't include_fields all cf_status_* or cf_tracking_* flags by name.
         //url.push("&exclude_fields=alias,cc,cf_crash_signature,cf_qa_whiteboard,cf_user_story,classification,flags,groups,is_cc_accessible,is_confirmed,is_creator_accessible,platform,priority,qa_contact,see_also,severity,target_milestone,url,version");
-        url.push("&include_fields=id,summary,is_open,creation_time,last_change_time");
+        url.push("&include_fields=id,summary,is_open,creation_time,cf_last_resolved");
 
         url = url.join("");
         xhr(url, (error, response) => {
