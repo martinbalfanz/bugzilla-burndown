@@ -114,7 +114,7 @@
             open: bug.is_open,
             //os: bug.op_sys,
             //product: bug.product,
-            reportedAt: new Date(bug.creation_time),
+            creationTime: new Date(bug.creation_time),
             lastModifiedAt: new Date(bug.last_change_time),
             /*
             points: Number.parseInt(bug.cf_fx_points) || null,

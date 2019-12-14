@@ -167,7 +167,7 @@
             let bugListURL = `https://bugzilla.mozilla.org/buglist.cgi?bug_id=`;
 
             for (let bug of bugs) {
-                let openDate = yyyy_mm_dd(bug.reportedAt);
+                let openDate = yyyy_mm_dd(bug.creationTime);
                 if (openDate < chartStartDate) {
                     openDate = chartStartDate;
                 }
