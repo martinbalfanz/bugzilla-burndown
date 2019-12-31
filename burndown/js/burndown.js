@@ -225,9 +225,6 @@
             }
 
             let chartPeriodInMs = Date.parse(_.last(bugDates)) - Date.parse(_.first(bugDates));
-            if (isNaN(chartPeriodInMs) || chartPeriodInMs <= 0) {
-              chartPeriodInMs = 0;
-            }
             let chartPeriodInDays = Math.ceil(chartPeriodInMs / MS_PER_DAY);
 
             let initialClosedBugCount = _.first(closedBugCounts);
