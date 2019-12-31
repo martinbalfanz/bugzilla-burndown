@@ -219,6 +219,34 @@
             }
 
             drawChart(bugDates, openBugCounts, closedBugCounts);
+
+            function roundToTwoDecimals(f) {
+              return Math.floor(f * 100) / 100;
+            }
+
+            let chartPeriodInMs = Date.parse(_.last(bugDates)) - Date.parse(_.first(bugDates));
+            if (isNaN(chartPeriodInMs) || chartPeriodInMs <= MS_PER_DAY) {
+              chartPeriodInMs = MS_PER_DAY;
+            }
+            let chartPeriodInDays = Math.ceil(chartPeriodInMs / MS_PER_DAY);
+
+            let initialClosedBugCount = _.first(closedBugCounts);
+            let currentClosedBugCount = _.last(closedBugCounts);
+            let bugsClosed = currentClosedBugCount - initialClosedBugCount;
+            let bugsClosedPerDay = bugsClosed / chartPeriodInDays;
+            console.log(`Velocity: ${initialClosedBugCount} -> ${currentClosedBugCount} = ${bugsClosed} bugs closed / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day`);
+
+            let initialOpenBugCount = _.first(openBugCounts);
+            let currentOpenBugCount = _.last(openBugCounts);
+            let bugsOpened = currentOpenBugCount - initialOpenBugCount + bugsClosed;
+            let bugsOpenedPerDay = bugsOpened / chartPeriodInDays;
+            console.log(`Velocity: ${initialOpenBugCount} -> ${currentOpenBugCount + bugsClosed} = ${bugsOpened} bugs opened / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsOpenedPerDay)} bugs opened per day`);
+
+            let daysToZeroOpenBugs = (bugsClosedPerDay > 0) ? Math.ceil(currentOpenBugCount / bugsClosedPerDay) : 0;
+            let msToZeroOpenBugs = daysToZeroOpenBugs * MS_PER_DAY;
+            let dateOfZeroOpenBugs = new Date(Date.now() + msToZeroOpenBugs);
+            let ymdOfZeroOpenBugs = yyyy_mm_dd(dateOfZeroOpenBugs);
+            console.log(`Forecast: ${currentOpenBugCount} open bugs / ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day = ${daysToZeroOpenBugs} days -> ${ymdOfZeroOpenBugs}`);
         });
     }
 
