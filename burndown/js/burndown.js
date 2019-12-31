@@ -225,21 +225,21 @@
             }
 
             let chartPeriodInMs = Date.parse(_.last(bugDates)) - Date.parse(_.first(bugDates));
-            if (isNaN(chartPeriodInMs) || chartPeriodInMs <= MS_PER_DAY) {
-              chartPeriodInMs = MS_PER_DAY;
+            if (isNaN(chartPeriodInMs) || chartPeriodInMs <= 0) {
+              chartPeriodInMs = 0;
             }
             let chartPeriodInDays = Math.ceil(chartPeriodInMs / MS_PER_DAY);
 
             let initialClosedBugCount = _.first(closedBugCounts);
             let currentClosedBugCount = _.last(closedBugCounts);
             let bugsClosed = currentClosedBugCount - initialClosedBugCount;
-            let bugsClosedPerDay = bugsClosed / chartPeriodInDays;
+            let bugsClosedPerDay = (chartPeriodInDays > 0) ? (bugsClosed / chartPeriodInDays) : 0;
             console.log(`Velocity: ${initialClosedBugCount} -> ${currentClosedBugCount} = ${bugsClosed} bugs closed / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day`);
 
             let initialOpenBugCount = _.first(openBugCounts);
             let currentOpenBugCount = _.last(openBugCounts);
             let bugsOpened = currentOpenBugCount - initialOpenBugCount + bugsClosed;
-            let bugsOpenedPerDay = bugsOpened / chartPeriodInDays;
+            let bugsOpenedPerDay = (chartPeriodInDays > 0) ? (bugsOpened / chartPeriodInDays) : 0;
             console.log(`Velocity: ${initialOpenBugCount} -> ${currentOpenBugCount + bugsClosed} = ${bugsOpened} bugs opened / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsOpenedPerDay)} bugs opened per day`);
 
             let daysToZeroOpenBugs = (bugsClosedPerDay > 0) ? Math.ceil(currentOpenBugCount / bugsClosedPerDay) : 0;
