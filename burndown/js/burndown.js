@@ -231,18 +231,21 @@
             let currentClosedBugCount = _.last(closedBugCounts);
             let bugsClosed = currentClosedBugCount - initialClosedBugCount;
             let bugsClosedPerDay = (chartPeriodInDays > 0) ? (bugsClosed / chartPeriodInDays) : 0;
-            console.log(`Velocity: ${initialClosedBugCount} -> ${currentClosedBugCount} = ${bugsClosed} bugs closed / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day`);
 
             let initialOpenBugCount = _.first(openBugCounts);
             let currentOpenBugCount = _.last(openBugCounts);
             let bugsOpened = currentOpenBugCount - initialOpenBugCount + bugsClosed;
             let bugsOpenedPerDay = (chartPeriodInDays > 0) ? (bugsOpened / chartPeriodInDays) : 0;
-            console.log(`Velocity: ${initialOpenBugCount} -> ${currentOpenBugCount + bugsClosed} = ${bugsOpened} bugs opened / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsOpenedPerDay)} bugs opened per day`);
+
+            console.log(`Progress: ${currentClosedBugCount} of ${currentOpenBugCount + currentClosedBugCount} bugs closed = ${roundToTwoDecimals(currentClosedBugCount / (currentOpenBugCount + currentClosedBugCount)) * 100}%`);
+            console.log(`Velocity: ${bugsClosed} bugs closed (${initialClosedBugCount} -> ${currentClosedBugCount}) in ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day`);
+            console.log(`Velocity: ${bugsOpened} bugs opened (${initialOpenBugCount} -> ${currentOpenBugCount + bugsClosed}) / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsOpenedPerDay)} bugs opened per day`);
 
             let daysToZeroOpenBugs = (bugsClosedPerDay > 0) ? Math.ceil(currentOpenBugCount / bugsClosedPerDay) : 0;
             let msToZeroOpenBugs = daysToZeroOpenBugs * MS_PER_DAY;
             let dateOfZeroOpenBugs = new Date(Date.now() + msToZeroOpenBugs);
             let ymdOfZeroOpenBugs = yyyy_mm_dd(dateOfZeroOpenBugs);
+
             console.log(`Forecast: ${currentOpenBugCount} open bugs / ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day = ${daysToZeroOpenBugs} days -> ${ymdOfZeroOpenBugs}`);
         });
     }
