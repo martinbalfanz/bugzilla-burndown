@@ -128,6 +128,10 @@
     function searchAndPlotBugs() {
         const t0 = Date.now();
         debug(`searchAndPlotBugs: ${queryString}`);
+        if (!queryString) {
+            setErrorText("🙈 Zarro boogs found");
+            return;
+        }
 
         $bugzilla.searchBugs(queryString, (error, bugs) => {
             const t1 = Date.now();
