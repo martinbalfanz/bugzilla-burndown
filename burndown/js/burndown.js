@@ -236,17 +236,26 @@
             let currentOpenBugCount = _.last(openBugCounts);
             let bugsOpened = currentOpenBugCount - initialOpenBugCount + bugsClosed;
             let bugsOpenedPerDay = (chartPeriodInDays > 0) ? (bugsOpened / chartPeriodInDays) : 0;
+            let bugsOpenedAndClosedPerDay = bugsClosedPerDay - bugsOpenedPerDay;
 
             console.log(`Progress: ${currentClosedBugCount} of ${currentOpenBugCount + currentClosedBugCount} bugs closed = ${roundToTwoDecimals(currentClosedBugCount / (currentOpenBugCount + currentClosedBugCount)) * 100}%`);
             console.log(`Velocity: ${bugsClosed} bugs closed (${initialClosedBugCount} -> ${currentClosedBugCount}) in ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day`);
             console.log(`Velocity: ${bugsOpened} bugs opened (${initialOpenBugCount} -> ${currentOpenBugCount + bugsClosed}) / ${chartPeriodInDays} days = ${roundToTwoDecimals(bugsOpenedPerDay)} bugs opened per day`);
 
-            let daysToZeroOpenBugs = (bugsClosedPerDay > 0) ? Math.ceil(currentOpenBugCount / bugsClosedPerDay) : 0;
-            let msToZeroOpenBugs = daysToZeroOpenBugs * MS_PER_DAY;
-            let dateOfZeroOpenBugs = new Date(Date.now() + msToZeroOpenBugs);
-            let ymdOfZeroOpenBugs = yyyy_mm_dd(dateOfZeroOpenBugs);
+            function logForecast(desc, bugsClosedPerDay) {
+              if (bugsClosedPerDay > 0) {
+                let daysToZeroOpenBugs = Math.ceil(currentOpenBugCount / bugsClosedPerDay);
+                let msToZeroOpenBugs = daysToZeroOpenBugs * MS_PER_DAY;
+                let dateOfZeroOpenBugs = new Date(Date.now() + msToZeroOpenBugs);
+                let ymdOfZeroOpenBugs = yyyy_mm_dd(dateOfZeroOpenBugs);
+                console.log(`${desc}: ${currentOpenBugCount} open bugs / ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day = ${daysToZeroOpenBugs} days -> ${ymdOfZeroOpenBugs}`);
+              } else {
+                console.log(`${desc}: ${currentOpenBugCount} open bugs / ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day -> Infinity`);
+              }
+            }
 
-            console.log(`Forecast: ${currentOpenBugCount} open bugs / ${roundToTwoDecimals(bugsClosedPerDay)} bugs closed per day = ${daysToZeroOpenBugs} days -> ${ymdOfZeroOpenBugs}`);
+            logForecast("Forecast min", bugsClosedPerDay);
+            logForecast("Forecast max", bugsOpenedAndClosedPerDay);
         });
     }
 
