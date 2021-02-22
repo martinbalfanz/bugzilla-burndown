@@ -120,6 +120,13 @@
         return element;
     }
 
+    function createLinkClosed(text, url) {
+        const element = createElement("a", text);
+        element.setAttribute("href", url);
+        element.setAttribute("class", "closed")
+        return element;
+    }
+
     function setErrorText(msg) {
         let chart = document.getElementById("chart");
         chart.innerText = msg;
@@ -168,6 +175,7 @@
             }
 
             const bugList = document.getElementById("bugs");
+            const bugListClosed = document.getElementById("closed-bugs");
             let bugListURL = `https://bugzilla.mozilla.org/buglist.cgi?bug_id=`;
 
             for (let bug of bugs) {
@@ -189,12 +197,17 @@
                         closedDate = chartStartDate;
                     }
                     closedBugOn(closedDate);
+
+                    const bugURL = $bugzilla.makeURL(bug.id);
+                    const bugRow = createElement("div");
+                    bugRow.appendChild(createLinkClosed(`bug ${bug.id} - ${bug.summary}`, bugURL));
+                    bugListClosed.appendChild(bugRow);
                 }
             }
 
             const openLink = createLink("Open bug list in Bugzilla", bugListURL);
             openLink.classList.add('open-bugzilla');
-            bugList.appendChild(openLink);
+            bugList.prepend(openLink);
 
             let bugDates = [];
             let openBugCounts = [];
